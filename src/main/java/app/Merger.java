@@ -26,7 +26,7 @@ public class Merger {
         try {
             fields = setFields();
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "An error exception occured during the merging process: " + ex);
+            LOGGER.log(Level.SEVERE, "An error occured during the merging process: " + ex);
         }
         mff.merge(fileDocx, fileXslt, outputPath, fields);
     }
