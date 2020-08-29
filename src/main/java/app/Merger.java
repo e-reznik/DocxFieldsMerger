@@ -1,7 +1,6 @@
 package app;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -15,9 +14,11 @@ public class Merger {
 
     private final static Logger LOGGER = Logger.getLogger(Merger.class.getName());
 
-    MergeFieldFinder mff = new MergeFieldFinder();
-
     public void init() throws IOException, TransformerException, URISyntaxException {
+        // TODO: Logger
+        MergeFieldFinder mff = new MergeFieldFinder();
+        XsltCreator xsltc = new XsltCreator();
+
         File fileDocx = new File(this.getClass().getResource("/docs/doc.docx").toURI());
         File fileXslt = new File(this.getClass().getResource("/docs/doc.xslt").toURI());
         File outputPath = new File("/home/evgenij/docs/merger/");
@@ -28,6 +29,8 @@ public class Merger {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "An error occured during the merging process: " + ex);
         }
+
+        xsltc.init(fields, outputPath);
         mff.merge(fileDocx, fileXslt, outputPath, fields);
     }
 

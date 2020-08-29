@@ -38,6 +38,7 @@ public class MergeFieldFinder {
      * @throws TransformerException
      */
     public void merge(File fileDocx, File fileXslt, File outputPath, Map fields) throws IOException, TransformerException {
+        // TODO: Logger
         if (!fileDocx.exists()) {
             throw new FileNotFoundException("File " + fileDocx + " not found.");
         }

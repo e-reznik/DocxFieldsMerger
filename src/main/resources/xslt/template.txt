@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
+    xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+    <xsl:output indent="yes" method="xml" encoding="utf-8" />
+
+
+  <!--  <xsl:param name="firstName" />
+    <xsl:param name="lastName" />-->
+
+    {param1}
+
+
+    <xsl:template match="node()|@*">
+        <xsl:copy>
+            <xsl:apply-templates select="node()|@*" />
+        </xsl:copy>
+    </xsl:template>
+      
+<!--
+    <xsl:template match="*[following-sibling::*[1]/*[text()=' MERGEFIELD firstName '] | preceding-sibling::*[position() &lt; 4]/*[text()=' MERGEFIELD firstName ']]"/> 
+    <xsl:template match="*[following-sibling::*[1]/*[text()=' MERGEFIELD lastName '] | preceding-sibling::*[position() &lt; 4]/*[text()=' MERGEFIELD lastName ']]"/> 
+-->
+
+{param2}
+
+<!--
+    <xsl:template match="w:instrText[text()=' MERGEFIELD firstName ']"> 
+        <xsl:element name="w:t">
+            <xsl:value-of select="$firstName" />
+        </xsl:element>  
+    </xsl:template>
+    <xsl:template match="w:instrText[text()=' MERGEFIELD lastName ']"> 
+        <xsl:element name="w:t">
+            <xsl:value-of select="$lastName" />
+        </xsl:element>  
+    </xsl:template>
+-->
+
+{param3}
+    
+</xsl:stylesheet>
