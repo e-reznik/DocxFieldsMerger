@@ -12,24 +12,29 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class XsltCreator {
 
+    private final static Logger LOGGER = Logger.getLogger(XsltCreator.class.getName());
+
     public void init(Map<String, String> fields, File outputXslt) throws FileNotFoundException, IOException {
-        // TODO: Logger
+        LOGGER.log(Level.INFO, "Starting XSLT creation...");
         StringBuilder inputBuffer;
         try (BufferedReader file = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/xslt/template.txt")))) {
             inputBuffer = new StringBuilder();
             String line;
 
-            String param1 = ""; // TODO: String Builder
-            String param2 = ""; // TODO: String Builder
-            String param3 = ""; // TODO: String Builder
-            for (String field : fields.keySet()) {
-                param1 += "<xsl:param name='" + field + "' />\n";
-                param2 += "<xsl:template match=\"*[following-sibling::*[1]/*[text()=' MERGEFIELD " + field + " '] | preceding-sibling::*[position() &lt; 4]/*[text()=' MERGEFIELD " + field + " ']]\"/>\n";
-                param3 += "<xsl:template match=\"w:instrText[text()=' MERGEFIELD " + field + " ']\">\n<xsl:element name=\"w:t\">\n<xsl:value-of select=\"$" + field + "\" />\n</xsl:element>\n</xsl:template>\n\n";
-            }
+            StringBuilder param1 = new StringBuilder();
+            StringBuilder param2 = new StringBuilder();
+            StringBuilder param3 = new StringBuilder();
+
+            fields.keySet().forEach((field) -> {
+                param1.append("<xsl:param name='").append(field).append("' />\n");
+                param2.append("<xsl:template match=\"*[following-sibling::*[1]/*[text()=' MERGEFIELD ").append(field).append(" '] | preceding-sibling::*[position() &lt; 4]/*[text()=' MERGEFIELD ").append(field).append(" ']]\"/>\n");
+                param3.append("<xsl:template match=\"w:instrText[text()=' MERGEFIELD ").append(field).append(" ']\">\n<xsl:element name=\"w:t\">\n<xsl:value-of select=\"$").append(field).append("\" />\n</xsl:element>\n</xsl:template>\n\n");
+            });
 
             while ((line = file.readLine()) != null) {
                 if (line.contains("{param1}")) {
@@ -48,7 +53,7 @@ public class XsltCreator {
             try (FileOutputStream fileOut = new FileOutputStream(outputXslt + File.separator + "notes.xslt")) {
                 fileOut.write(inputStr.getBytes());
             }
-
         }
+        LOGGER.log(Level.INFO, "Finished XSLT creation");
     }
 }
