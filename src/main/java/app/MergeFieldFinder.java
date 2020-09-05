@@ -1,6 +1,9 @@
 package app;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
@@ -29,6 +32,8 @@ public class MergeFieldFinder {
     }
 
     /**
+     * Validating information and calling necessary methods for the merging
+     * process.
      *
      * @param fileDocx the Docx file to be processed
      * @param fileXslt the XSLT with the rules
@@ -38,12 +43,12 @@ public class MergeFieldFinder {
      * @throws TransformerException
      */
     public void merge(File fileDocx, File fileXslt, File outputPath, Map fields) throws IOException, TransformerException {
-        // TODO: Logger
+        LOGGER.log(Level.INFO, "Starting merging...");
         if (!fileDocx.exists()) {
-            throw new FileNotFoundException("File " + fileDocx + " not found.");
+            throw new FileNotFoundException("File " + fileDocx + " not found. Process aborted.");
         }
         if (!fileXslt.exists()) {
-            throw new FileNotFoundException("File " + fileXslt + " not found.");
+            throw new FileNotFoundException("File " + fileXslt + " not found. Process aborted.");
         }
         // TODO: Check outputPath
 
@@ -54,8 +59,6 @@ public class MergeFieldFinder {
         Path tempFile = mergeFields(fields, is, fileXslt);
 
         replaceFileDocx(fileDocxNew, tempFile);
-
-        fileDocxNew.setReadOnly();
     }
 
     /**
@@ -66,6 +69,7 @@ public class MergeFieldFinder {
      * @throws IOException
      */
     private Path copyDocx(File in, File outputPath) throws IOException {
+        LOGGER.log(Level.INFO, "Copying Docx...");
         String fileNameNew = removeExtension(in) + ".docx";
         Path out = Path.of(outputPath + File.separator + fileNameNew);
 
@@ -109,7 +113,8 @@ public class MergeFieldFinder {
     }
 
     /**
-     * Passes the map with the mergefields to the XSLT and begins the transformation.
+     * Passes the map with the mergefields to the XSLT and begins the
+     * transformation.
      *
      * @param map
      * @param isXml
@@ -119,11 +124,12 @@ public class MergeFieldFinder {
      * @throws TransformerException
      */
     private Path mergeFields(Map<String, String> map, InputStream isXml, File urlXslt) throws TransformerConfigurationException, IOException, TransformerException {
+        LOGGER.log(Level.INFO, "Starting actual mergin of the fields...");
         TransformerFactory factory = TransformerFactory.newInstance();
         Source xslt = new StreamSource(new File(urlXslt.toURI()));
         Transformer transformer = factory.newTransformer(xslt);
 
-        /* Felder als Parameter übergeben */
+        /* Passing fields as parameter */
         try {
             map.keySet().forEach(s -> {
                 transformer.setParameter(s, map.get(s));
@@ -134,7 +140,6 @@ public class MergeFieldFinder {
 
         Source text = new StreamSource(isXml);
 
-//           Path out = Path.of(this.getClass().getResource("/docs/") + fileNameNew);
         File tempFile = File.createTempFile("document", "xml", new File(this.getClass().getResource("/docs/").getFile()));
         tempFile.deleteOnExit();
         transformer.transform(text, new StreamResult(tempFile));
@@ -149,6 +154,7 @@ public class MergeFieldFinder {
      * @throws IOException
      */
     private void replaceFileDocx(File urlDocx, Path documentTemp) throws IOException {
+        LOGGER.log(Level.INFO, "Replacing old document.xml...");
         URI uri = URI.create("jar:file:" + urlDocx);
 
         Map<String, String> env = new HashMap<>();
