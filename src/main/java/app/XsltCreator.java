@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package app;
 
 import java.io.BufferedReader;
@@ -50,7 +45,7 @@ public class XsltCreator {
 
             String inputStr = inputBuffer.toString();
 
-            try (FileOutputStream fileOut = new FileOutputStream(outputXslt + File.separator + "notes.xslt")) {
+            try (FileOutputStream fileOut = new FileOutputStream(outputXslt + File.separator + "doc.xslt")) {
                 fileOut.write(inputStr.getBytes());
             }
         }
